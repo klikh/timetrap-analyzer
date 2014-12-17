@@ -31,18 +31,22 @@ class Timetrap::Formatters::Today
       sprintf("%s", key) unless key.split(" ")[1].start_with?("-")
     end.reject{|i| !i || i.strip.empty?}.join("\n")
     
+    total = categories.values.inject(:+)
+
     cats = categories.reverse_sort_by_value.map do |category, duration|
       cat_name = CATEGORIES[category] || category
-      format(cat_name, duration)
+      format(cat_name, duration, total)
     end.join("\n")
-
-    total = categories.values.inject(:+)
     
     acts + "\n\n" + cats + "\n-----\n" + format("Total", total)
   end
   
-  def format(cat_name, duration)
-    sprintf("%5s  %s", dur_to_s(duration), cat_name)
+  def format(cat_name, duration, total = nil)
+    sprintf("%5s  %2s  %s", dur_to_s(duration), percent(duration, total), cat_name)
+  end
+  
+  def percent(duration, total)
+    total == nil ? "   " : (100 * duration / total.to_f).round.to_s + "%"
   end
   
   def dur_to_s(duration)
