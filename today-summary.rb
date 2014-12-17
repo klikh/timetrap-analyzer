@@ -27,7 +27,9 @@ class Timetrap::Formatters::Today
       categories[cat_symbol] += duration
     end
     
-    acts = activities.map { |key, val| sprintf("%s", key) }.join("\n")
+    acts = activities.map do |key, val|
+      sprintf("%s", key) unless key.split(" ")[1].start_with?("-")
+    end.reject{|i| !i || i.strip.empty?}.join("\n")
     
     cats = categories.reverse_sort_by_value.map do |category, duration|
       cat_name = CATEGORIES[category] || category
