@@ -10,7 +10,7 @@ class Timetrap::Formatters::Today
   end
 
   def output
-    day_summary(@entries.reject{ |entry| entry[:end].to_date != Date.current })
+    day_summary(@entries.reject{ |entry| entry[:start].to_date != Date.current })
   end
   
 end

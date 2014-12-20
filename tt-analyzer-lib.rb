@@ -6,6 +6,18 @@ class Hash
   end
 end
 
+class String
+  def empty_or_spaces?
+    strip.empty?
+  end
+end
+
+class NilClass
+  def empty_or_spaces?
+    true
+  end
+end
+
 module TimeTrapAnalyzer
   def day_summary(entries)
     activities = {}
@@ -14,6 +26,7 @@ module TimeTrapAnalyzer
     categories.default = 0
 
     entries.map do |entry|      
+      entry[:end] = DateTime.current if !entry[:end]
       duration = TimeDifference.between(entry[:start], entry[:end]).in_minutes.round.to_i
       activities[entry[:note]] += duration
 
@@ -22,8 +35,9 @@ module TimeTrapAnalyzer
     end
     
     acts = activities.map do |key, val|
-      sprintf("%s", key) unless key.split(" ")[1].start_with?("-")
-    end.reject{|i| !i || i.strip.empty?}.join("\n")
+      activity_comment = key.split(" ")[1]
+      sprintf("%s", key) unless activity_comment.empty_or_spaces? || activity_comment.start_with?("-")
+    end.reject{|i| !i || i.strip.empty_or_spaces?}.join("\n")
     
     total = categories.values.inject(:+)
 
@@ -36,7 +50,7 @@ module TimeTrapAnalyzer
   end
   
   def format(cat_name, duration, total = nil)
-    sprintf("%5s  %2s  %s", dur_to_s(duration), percent(duration, total), cat_name)
+    sprintf("%5s  %3s  %s", dur_to_s(duration), percent(duration, total), cat_name)
   end
   
   def percent(duration, total)
