@@ -19,7 +19,7 @@ class NilClass
 end
 
 module TimeTrapAnalyzer
-  def day_summary(entries)
+  def day_summary(entries, print_acts=true, print_categories = true)
     activities = {}
     categories = {}
     activities.default = 0
@@ -46,7 +46,8 @@ module TimeTrapAnalyzer
       format(cat_name, duration, total)
     end.join("\n")
     
-    acts + "\n\n" + cats + "\n-----\n" + format("Total", total)
+    timing = cats + "\n-----\n" + format("Total", total)
+    print_acts ? acts + "\n\n" + timing : timing
   end
   
   def format(cat_name, duration, total = nil)
@@ -65,9 +66,10 @@ module TimeTrapAnalyzer
   
   CATEGORIES = {
     "S" => "Support",
+    "H" => "Other Activity",
     "R" => "Review",
     "T" => "Talks",
-    "B" => "Self Fixing",
-    "+" => "Productive"
+    "+" => "Development",
+    "L" => "Self improvement"
   }
 end
